@@ -1,0 +1,6 @@
+{
+  "name": "Base 12 time",
+  "description": "Show time in base 12",
+  "uuid": "base12-time@probeiuscorp",
+  "shell-version": ["46"]
+}
