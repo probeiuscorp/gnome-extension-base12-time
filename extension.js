@@ -4,9 +4,8 @@ import GnomeDesktop from 'gi://GnomeDesktop';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 // TODO: custom unicode
-function base12FromBase10(base10) {
-  const number = parseInt(base10);
-  return number.toString(12).toUpperCase();
+function d2b12(digit) {
+  return digit.toString(12).toUpperCase();
 }
 
 function enable() {
@@ -25,10 +24,14 @@ function enable() {
       const base10TimeParts = base10Time.split(/\b/);
       if(base10TimeParts.length !== 3) return false;
       const [base10Hours, separator, base10Minutes] = base10TimeParts;
-      if(isNaN(parseInt(base10Hours)) || isNaN(parseInt(base10Minutes))) return false;
+      const hours = parseInt(base10Hours);
+      const minutes = parseInt(base10Minutes);
+      if(isNaN(hours) || isNaN(minutes)) return false;
 
-      const base12Minutes = base12FromBase10(base10Minutes).padStart(2, '0');
-      const base12 = `${base12FromBase10(base10Hours)}${separator}${base12Minutes}`;
+      const minutesRemainder = minutes % 5;
+      const minutesFractional = Math.floor(minutes / 5);
+
+      const base12 = `${d2b12(hours)}.${d2b12(minutesFractional)}\uFE62${d2b12(minutesRemainder)}`;
       const nextText = `${dateTime.slice(0, timePartStart + 1)}${base12}`;
       menu._clockDisplay.set_text(nextText);
       return true;
