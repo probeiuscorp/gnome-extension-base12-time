@@ -32,7 +32,17 @@ function enable() {
       const minutesFractional = Math.floor(minutes / 5);
 
       const base12 = `${d2b12(hours)}.${d2b12(minutesFractional)}\uFE62${d2b12(minutesRemainder)}`;
-      const nextText = `${dateTime.slice(0, timePartStart + 1)}${base12}`;
+
+      const base10Before = dateTime.slice(0, timePartStart + 1);
+      const base12Before = base10Before.split(/\b/).map((group) => {
+        const number = parseInt(group);
+        if(isNaN(number)) {
+          return group;
+        } else {
+          return d2b12(number);
+        }
+      }).join('');
+      const nextText = `${base12Before}${base12}`;
       menu._clockDisplay.set_text(nextText);
       return true;
     })();
