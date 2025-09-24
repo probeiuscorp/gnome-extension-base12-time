@@ -4,8 +4,19 @@ import GnomeDesktop from 'gi://GnomeDesktop';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 // TODO: custom unicode
-function d2b12(digit) {
-  return digit.toString(12).toUpperCase();
+function d2b12(number) {
+  const str = number.toString(12);
+  let b12Str = '';
+  for(let i=0; i<str.length; i++) {
+    const ch = str[i];
+    const offset = (
+      ch === 'a' ? 10 :
+      ch === 'b' ? 11 :
+      +ch
+    );
+    b12Str += String.fromCodePoint(0xE000 + offset);
+  }
+  return b12Str;
 }
 
 function enable() {
@@ -13,10 +24,12 @@ function enable() {
   const oldClock = menu._clock;
   oldClock.disconnect(menu._clockChangedId);
   const clock = new GnomeDesktop.WallClock();
+  menu._clockDisplay.set_style('font-family: "Base 12 Sans-Serif", inherit');
   clock.bind_property('clock', menu._clockDisplay, 'text', GObject.BindingFlags.SYNC_CREATE);
   menu._clock = clock;
   function updateTime() {
     const dateTime = clock.clock;
+    // const dateTime = 'Jun 14\u200214:12';
     const succeeded = (function() {
       const timePartStart = dateTime.indexOf(String.fromCharCode(0x2002));
       if(timePartStart === -1) return false;
